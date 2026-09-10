@@ -1,0 +1,36 @@
+{
+  "version": 3,
+  "status": "fail",
+  "test-environment": {
+    "jq": "jq-1.7.1",
+    "bats": "Bats 1.11.0",
+    "OS": "Linux 6.1.0-21-amd64 GNU/Linux"
+  },
+  "tests": [
+    {
+      "name": "double a number",
+      "status": "pass",
+      "test_code": "run jq -f with_debug.jq <<< \"10\"\nassert_success\nassert_output \"20\"",
+      "output": "[\"DEBUG:\",\"Input is: 10\"]\n"
+    },
+    {
+      "name": "double a string successfully",
+      "status": "pass",
+      "test_code": "run jq -f with_debug.jq <<< '\"foo\"'\nassert_success\nassert_output '\"foofoo\"'",
+      "output": "[\"DEBUG:\",\"Input is: foo\"]\n"
+    },
+    {
+      "name": "double a string unexpected output",
+      "status": "fail",
+      "test_code": "run jq -f with_debug.jq <<< '\"foobar\"'\nassert_success\nassert_output '\"foofoo\"'",
+      "message": "(from function `assert_output' in file bats-extra.bash, line 394,\n in test file test-with_debug.bats, line 20)\n  `assert_output '\"foofoo\"'' failed\n-- output differs --\nexpected : \"foofoo\"\nactual   : \"foobarfoobar\"\n--\n",
+      "output": "[\"DEBUG:\",\"Input is: foobar\"]\n"
+    },
+    {
+      "name": "double an array is an error",
+      "status": "pass",
+      "test_code": "run jq -f with_debug.jq <<< \"[1,2,3]\"\nassert_failure\nassert_output --partial 'array ([1,2,3]) and number (2) cannot be multiplied'",
+      "output": "[\"DEBUG:\",\"Input is: [1,2,3]\"]\n"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "name": "@exercism/jq-browser-test-runner",
+  "version": "0.1.0",
+  "description": "Exercism jq Track test runner that runs in the browser, on a wasm kernel",
+  "sideEffects": false,
+  "source": "src/index.ts",
+  "types": "./output/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./output/index.d.ts",
+      "import": "./output/index.mjs",
+      "require": "./output/index.cjs",
+      "default": "./output/index.js"
+    }
+  },
+  "scripts": {
+    "prepack": "npm run build",
+    "build": "node build.mjs && tsc",
+    "build:dev": "MINIFY=false node build.mjs && tsc",
+    "test": "node bin/run-tests-in-container.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/exercism/jq-test-runner-clientside.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/exercism/jq-test-runner-clientside/issues"
+  },
+  "homepage": "https://github.com/exercism/jq-test-runner-clientside#readme",
+  "devDependencies": {
+    "esbuild": "^0.27.3",
+    "playwright": "^1.62.1",
+    "tar": "^7.5.22",
+    "typescript": "^5.9.3"
+  },
+  "files": [
+    "src/*",
+    "vendor/**",
+    "bin/*",
+    "tests/**",
+    "build.mjs",
+    "package.json",
+    "tsconfig.json",
+    "package-lock.json"
+  ]
+}

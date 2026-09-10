@@ -1,0 +1,1 @@
+{"name":"kernel","version":"0.1.0","type":"module","exports":{".":{"types":"./kernel_client.d.ts","default":"./kernel_client.mjs"},"./kernel.js":"./kernel.js","./kernel_bg.wasm":"./kernel_bg.wasm"}}

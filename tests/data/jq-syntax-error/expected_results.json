@@ -1,0 +1,14 @@
+{
+  "version": 3,
+  "status": "fail",
+  "test-environment": {
+  },
+  "tests": [
+    {
+      "name": "jq syntax error",
+      "status": "fail",
+      "test_code": "run jq -f script.jq < /dev/null\nassert_success",
+      "message": "1..1\nnot ok 1 jq syntax error\n# (from function `assert_success' in file bats-extra.bash, line 409,\n#  in test file tests.bats, line 6)\n#   `assert_success' failed\n#\n# -- command failed --\n# status : 3\n# output (3 lines):\n#   jq: error: syntax error, unexpected QQSTRING_START, expecting $end (Unix shell quoting issues?) at <top-level>, line 4:\n#   \"bar\"\n#   jq: 1 compile error\n# --\n#"
+    }
+  ]
+}

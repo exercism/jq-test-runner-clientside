@@ -1,0 +1,16 @@
+{
+  "version": 3,
+  "status": "pass",
+  "test-environment": {
+    "jq": "jq-1.7",
+    "bats": "Bats 1.10.0",
+    "OS": "Linux 6.1.0-13-amd64 GNU/Linux"
+  },
+  "tests": [
+    {
+      "name": "jq v1.7 syntax test",
+      "status": "pass",
+      "test_code": "run jq -r -f script.jq <<< '42'\nassert_success\nassert_output $'OK\\n42'"
+    }
+  ]
+}

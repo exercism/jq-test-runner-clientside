@@ -136,16 +136,16 @@ export class Kernel {
 
   async run(
     argv: string[],
-    options: { cwd: string; timeout: number; signal?: AbortSignal; env?: string[] },
+    options: { cwd: string; timeout: number; signal?: AbortSignal },
   ): Promise<RunResult> {
-    const { cwd, timeout, signal, env = this.env } = options;
+    const { cwd, timeout, signal } = options;
     if (signal?.aborted) throw new AbortedRunError("Run was aborted before it could start");
 
     const session = makeSession();
 
     // run() resolves at spawn, not completion. Aborting before it resolves
     // cancels the request; after it, the session is hung up below.
-    const request = this.#client.run(argv, env, cwd, true);
+    const request = this.#client.run(argv, this.env, cwd, true);
     signal?.addEventListener("abort", () => request.abort(), { once: true });
 
     const sid = await request;

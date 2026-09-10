@@ -24,8 +24,13 @@ function toBoolean(value) {
 // The flat destination matches the default kernel path, `./kernel/`.
 
 const KERNEL_SRC = "vendor";
+// The Docker image sets this with `ENV BATS_RUN_SKIPPED=true` so that tests
+// guarded by `[[ $BATS_RUN_SKIPPED == "true" ]] || skip` actually run. Every
+// exercise in the track guards every test after the first, so without it a
+// solution would be reported as passing on the strength of one test.
+const EXTRA_ENV = { BATS_RUN_SKIPPED: "true" };
+
 const KERNEL_FILES = [
-  ["boot.json", "boot.json"],
   ["sysroot.tar", "sysroot.tar"],
   ["kernel/kernel_client.mjs", "kernel_client.mjs"],
   ["kernel/kernel.js", "kernel.js"],
@@ -33,14 +38,16 @@ const KERNEL_FILES = [
 ];
 
 function copyKernel(destination) {
-  const missing = KERNEL_FILES.filter(([from]) => !fs.existsSync(path.join(KERNEL_SRC, from)));
+  const missing = [...KERNEL_FILES.map(([from]) => from), "boot.json"].filter(
+    (from) => !fs.existsSync(path.join(KERNEL_SRC, from)),
+  );
   if (missing.length > 0) {
     if (toBoolean(process.env.SKIP_KERNEL)) {
       console.warn(`! no kernel in ${KERNEL_SRC}/, SKIP_KERNEL set: output/ will not be servable`);
       return;
     }
     throw new Error(
-      `no kernel in ${KERNEL_SRC}/ (missing ${missing.map(([f]) => f).join(", ")}).\n` +
+      `no kernel in ${KERNEL_SRC}/ (missing ${missing.join(", ")}).\n` +
         `Unpack one there, or set SKIP_KERNEL=1 to build the bundles alone.`,
     );
   }
@@ -51,7 +58,14 @@ function copyKernel(destination) {
     fs.copyFileSync(path.join(KERNEL_SRC, from), path.join(destination, to));
     bytes += fs.statSync(path.join(destination, to)).size;
   }
-  console.log(`${destination}: ${KERNEL_FILES.length} files, ${(bytes / 1e6).toFixed(1)}MB`);
+
+  // boot.json is rewritten rather than copied, so vendor/ stays pristine.
+  const boot = JSON.parse(fs.readFileSync(path.join(KERNEL_SRC, "boot.json"), "utf8"));
+  boot.env = { ...boot.env, ...EXTRA_ENV };
+  const bootPath = path.join(destination, "boot.json");
+  fs.writeFileSync(bootPath, JSON.stringify(boot));
+  bytes += fs.statSync(bootPath).size;
+  console.log(`${destination}: ${KERNEL_FILES.length + 1} files, ${(bytes / 1e6).toFixed(1)}MB`);
 }
 
 /* ------------------------------------------------------------------- tar */

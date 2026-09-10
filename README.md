@@ -14,9 +14,10 @@ import { runTests } from "@exercism/jq-browser-test-runner";
 
 const results = await runTests("two-fer", {
   "two-fer.jq": '"One for \\(.name // "you"), one for me."',
-  "test-two-fer.bats": "...",
-  "bats-extra.bash": "...",
-  ".meta/config.json": "...",
+  "test-two-fer.bats": "...", // the exercise's test file
+  "bats-extra.bash": "...", // both helpers: the test file `load`s them
+  "bats-jq.bash": "...",
+  ".meta/config.json": "...", // run.sh reads .files.test[0] from this
 }, ["two-fer.jq"]);
 ```
 
